@@ -7,6 +7,8 @@ output: html_document
 
 ```{r}
 library(tidyverse)
+library(gtsummary)
+library(emulator)
 ```
 
 ```{r}
@@ -22,6 +24,51 @@ test_df=test_df %>%
                practice_sport=as.factor(practice_sport),
                is_first_child=as.factor(is_first_child),
                transport_means=as.factor(transport_means),
-               wkly_study_hours=as.factor(wkly_study_hours))
+               wkly_study_hours=as.factor(wkly_study_hours)) 
+```
+
+```{r}
+summary(test_df)
+
+test_df %>% 
+  ggplot(aes(x=math_score))+geom_histogram()
+test_df %>% 
+  ggplot(aes(x=reading_score))+geom_histogram()
+test_df %>% 
+  ggplot(aes(x=writing_score))+geom_histogram()
+
+test_df %>% 
+  ggplot(aes(x=test_prep))+geom_histogram(stat = 'count')
+```
+
+```{r}
+stu_data=table(test_df$gender,test_df$ethnic_group)
+
+chisq.test(stu_data)
+```
+
+```{r}
+
+# Loop through pairs of columns and run the chi-square test
+
+for (i in 1:(11 - 1)) {
+  for (j in (i + 1):11) {
+    # Get the two columns to test
+    col1 <- test_df[[i]]
+    col2 <- test_df[[j]]
+    
+    contingency_table <- table(col1, col2)
+    
+    # Perform the chi-square test
+    chi_test <- chisq.test(contingency_table)
+    
+    #PRint the results 
+    if(chi_test$p.value<.05){
+      cat("Chi-square test for columns", colnames(test_df)[i], "and", colnames(test_df)[j], "\n")
+    print(chi_test)
+    }
+    
+  }
+}
 ```
 
