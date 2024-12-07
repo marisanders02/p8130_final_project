@@ -368,6 +368,9 @@ display: none;
 ## ✖ dplyr::filter() masks stats::filter()
 ## ✖ dplyr::lag()    masks stats::lag()
 ## ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+<pre class="r"><code>library(gtsummary)
+library(emulator)</code></pre>
+<pre><code>## Loading required package: mvtnorm</code></pre>
 <pre class="r"><code>test_df=read_csv(&#39;Project_1_data.csv&#39;) %&gt;% janitor::clean_names() </code></pre>
 <pre><code>## Rows: 948 Columns: 14
 ## ── Column specification ────────────────────────────────────────────────────────
@@ -388,6 +391,39 @@ display: none;
                is_first_child=as.factor(is_first_child),
                transport_means=as.factor(transport_means),
                wkly_study_hours=as.factor(wkly_study_hours))</code></pre>
+<pre class="r"><code>summary(test_df)</code></pre>
+<pre><code>##     gender     ethnic_group             parent_educ         lunch_type 
+##  female:488   group A: 80   associate&#39;s degree:198   free/reduced:331  
+##  male  :460   group B:171   bachelor&#39;s degree :104   standard    :617  
+##               group C:277   high school       :176                     
+##               group D:237   master&#39;s degree   : 55                     
+##               group E:124   some college      :199                     
+##               NA&#39;s   : 59   some high school  :163                     
+##                             NA&#39;s              : 53                     
+##      test_prep   parent_marital_status   practice_sport is_first_child
+##  completed:322   divorced:146          never    :112    no  :314      
+##  none     :571   married :516          regularly:343    yes :604      
+##  NA&#39;s     : 55   single  :213          sometimes:477    NA&#39;s: 30      
+##                  widowed : 24          NA&#39;s     : 16                  
+##                  NA&#39;s    : 49                                         
+##                                                                       
+##                                                                       
+##   nr_siblings      transport_means wkly_study_hours   math_score    
+##  Min.   :0.000   private   :337    &lt; 5   :253       Min.   :  0.00  
+##  1st Qu.:1.000   school_bus:509    &gt; 10  :150       1st Qu.: 56.00  
+##  Median :2.000   NA&#39;s      :102    10-May:508       Median : 66.00  
+##  Mean   :2.155                     NA&#39;s  : 37       Mean   : 65.98  
+##  3rd Qu.:3.000                                      3rd Qu.: 76.00  
+##  Max.   :7.000                                      Max.   :100.00  
+##  NA&#39;s   :46                                                         
+##  reading_score    writing_score   
+##  Min.   : 17.00   Min.   : 10.00  
+##  1st Qu.: 59.00   1st Qu.: 57.00  
+##  Median : 69.50   Median : 68.00  
+##  Mean   : 68.84   Mean   : 67.93  
+##  3rd Qu.: 80.00   3rd Qu.: 78.25  
+##  Max.   :100.00   Max.   :100.00  
+## </code></pre>
 
 
 
