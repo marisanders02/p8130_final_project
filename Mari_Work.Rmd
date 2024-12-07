@@ -1,0 +1,79 @@
+
+---
+title: "Mari's Work"
+output: github_document
+---
+
+```{r}
+library(tidyverse)
+library(GGally)
+library(corrplot)
+library(gpairs)
+```
+
+```{r}
+test_df=read_csv('Project_1_data.csv') %>% janitor::clean_names() 
+
+test_df=test_df %>% 
+        mutate(gender=as.factor(gender),
+               ethnic_group=as.factor(ethnic_group),
+               parent_educ=as.factor(parent_educ),
+               lunch_type=as.factor(lunch_type),
+               test_prep=as.factor(test_prep),
+               parent_marital_status=as.factor(parent_marital_status),
+               practice_sport=as.factor(practice_sport),
+               is_first_child=as.factor(is_first_child),
+               transport_means=as.factor(transport_means),
+               wkly_study_hours=as.factor(wkly_study_hours))
+
+summary(test_df)
+
+ggplot(test_df, aes(x = math_score)) + 
+  geom_histogram()
+
+ggplot(test_df, aes(x = writing_score)) + geom_histogram()
+
+ggplot(test_df,aes(x = reading_score)) + geom_histogram()
+
+
+boxplot(test_df, xaxt = "n") 
+axis(1, at = 1:ncol(test_df), labels = colnames(test_df), las = 2, cex.axis = 0.8)
+
+3 + 1.5*(2)
+```
+
+Q3 + 1.5IQR 
+
+3rd quartile: 3 
+
+IQR = 3 -1 = 2
+
+7 siblings is an outlier 
+
+Drop number of siblings because gender and number of siblings have a relationship based on a chi-squared test. There is also a relationship between number of siblings and `is_first_child`. 
+when number of siblings is zero and is_first_child is NA, we filled in the missing values to say that obviously that child would be the first child. 
+
+Making our model, we are doing step_wise, forward and backward, then comparing them based on AIC, as well as checking diagnostics. In the initial model, we put in all the values plus the interactions. 
+
+Take out lunch type because it is not significant but one of its interactions
+
+Tried box-cox method to see if a transformation would make the QQ Plot look better. We tried to do the predictor squared, but it did not change the appearance of the data much and it is much easier to interpret without the squared. 
+
+Tried box-cox method on math, since there was a 0 in the results, we couldn't do that transformation, but it looked pretty similar to the other one and it followed a pretty good line. 
+reading: .2789
+
+math: .3476
+
+writing: .362
+
+after 
+
+reading: .284
+
+math: .3311
+
+writing: .3826
+
+took out observation 34 from the data for reading and writing because it was an outlier and improved the qqplot when we removed it. 
+
+decided to keep because it seemed consistent and there didn't seem to be an entry error. 
