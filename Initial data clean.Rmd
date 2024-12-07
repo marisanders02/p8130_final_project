@@ -14,7 +14,11 @@ library(emulator)
 ```{r}
 test_df=read_csv('Project_1_data.csv') %>% janitor::clean_names() 
 
-test_df=test_df %>% 
+test_df=test_df %>%  
+  mutate(is_first_child=case_when(
+    is.na(is_first_child) &nr_siblings==0 ~ 'yes',
+    TRUE ~is_first_child
+  )) %>% 
         mutate(gender=as.factor(gender),
                ethnic_group=as.factor(ethnic_group),
                parent_educ=as.factor(parent_educ),
@@ -25,6 +29,7 @@ test_df=test_df %>%
                is_first_child=as.factor(is_first_child),
                transport_means=as.factor(transport_means),
                wkly_study_hours=as.factor(wkly_study_hours)) 
+ 
 ```
 
 ```{r}
@@ -64,11 +69,23 @@ for (i in 1:(11 - 1)) {
     
     #PRint the results 
     if(chi_test$p.value<.05){
+      
+      
       cat("Chi-square test for columns", colnames(test_df)[i], "and", colnames(test_df)[j], "\n")
     print(chi_test)
+    
+
     }
     
   }
 }
+
+ggplot(test_df, aes(x = nr_siblings, fill = gender)) +
+      geom_bar(position = "fill") +
+      labs(y = "Proportion", title = "Pairwise Relationship")
+ggplot(test_df, aes(x = nr_siblings, fill = is_first_child)) +
+      geom_bar(position = "fill") +
+      labs(y = "Proportion", title = "Pairwise Relationship")
+
 ```
 
