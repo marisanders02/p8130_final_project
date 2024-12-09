@@ -228,6 +228,22 @@ Diagnostics
 plot(stepwise_model_read2)
 ```
 
+10-Fold Cross-Validation
+
+Writing
+```{r}
+library(caret)
+train = trainControl(method = "cv", number = 10)
+
+writing_model_cv = train(writing_score ~ gender + ethnic_group + parent_educ +  lunch_type + test_prep + parent_marital_status + practice_sport +    is_first_child + transport_means + wkly_study_hours +  reading_score + math_score,
+data = df_4_mdl_write2,
+trControl = train,
+method = 'lm',
+na.action = na.pass)
+
+print(writing_model_cv)
+```
+
 
 ## Savannah Messing Around with Removing Interaction Terms
 
