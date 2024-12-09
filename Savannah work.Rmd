@@ -235,7 +235,7 @@ Writing
 library(caret)
 train = trainControl(method = "cv", number = 10)
 
-writing_model_cv = train(writing_score ~ gender + ethnic_group + parent_educ +  lunch_type + test_prep + parent_marital_status + practice_sport +    is_first_child + transport_means + wkly_study_hours +  reading_score + math_score,
+writing_model_cv = train(writing_score ~ gender + ethnic_group + parent_educ +  lunch_type + test_prep + parent_marital_status + practice_sport +    is_first_child + transport_means + wkly_study_hours +  reading_score + math_score +math_score*reading_score,
 data = df_4_mdl_write2,
 trControl = train,
 method = 'lm',
