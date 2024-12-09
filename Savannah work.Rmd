@@ -231,11 +231,50 @@ plot(stepwise_model_read2)
 
 ## Savannah Messing Around with Removing Interaction Terms
 
+################################# -- before the X-line might be a good idea to include
+
+Trying out just removing the insignificant terms from the model that predicts with covariates and the other scores
+
+Writing
+```{r}
+set.seed(4)
+
+writing_without_insig_interactions <- lm(writing_score ~ gender + ethnic_group + parent_educ +     lunch_type + test_prep + parent_marital_status + practice_sport +    is_first_child + transport_means + wkly_study_hours + reading_score + math_score + transport_means:reading_score + math_score:reading_score, data=df_4_mdl_read2)
+
+summary(writing_without_insig_interactions)
+plot(writing_without_insig_interactions)
+```
+
+Math
+```{r}
+set.seed(4)
+
+math_without_insig_interactions <- lm(math_score ~ gender + ethnic_group + parent_educ +     lunch_type + test_prep + parent_marital_status + practice_sport +    is_first_child + transport_means + wkly_study_hours + reading_score + writing_score + lunch_type:is_first_child + test_prep:transport_means + wkly_study_hours:reading_score, data=df_4_mdl_read2)
+
+summary(math_without_insig_interactions)
+plot(math_without_insig_interactions)
+```
+
+Reading
+```{r}
+set.seed(4)
+
+reading_without_insig_interactions <- lm(reading_score ~ gender + ethnic_group + parent_educ +     lunch_type + test_prep + parent_marital_status + practice_sport +    is_first_child + transport_means + wkly_study_hours + writing_score + math_score + is_first_child:transport_means + transport_means:writing_score, data=df_4_mdl_read2)
+
+summary(reading_without_insig_interactions)
+plot(reading_without_insig_interactions)
+```
+
+
+
+
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 I removed the interaction terms that weren't present in both models (covariates only and with other score) as well as weren't another variable interacting with the other scores
 ```{r}
 set.seed(4)
 
-reading_without_interactions <- lm(reading_score ~ gender + ethnic_group + parent_educ +     lunch_type + test_prep + parent_marital_status + practice_sport +    is_first_child + transport_means + wkly_study_hours + reading_score + math_score + gender:writing_score + gender:math_score + ethnic_group:transport_means +     ethnic_group:writing_score + parent_educ:math_score +   lunch_type:wkly_study_hours + 
+reading_without_interactions <- lm(reading_score ~ gender + ethnic_group + parent_educ +     lunch_type + test_prep + parent_marital_status + practice_sport +    is_first_child + transport_means + wkly_study_hours + writing_score + math_score + gender:writing_score + gender:math_score + ethnic_group:transport_means +     ethnic_group:writing_score + parent_educ:math_score +   lunch_type:wkly_study_hours + 
 parent_marital_status:is_first_child +     parent_marital_status:wkly_study_hours + parent_marital_status:writing_score + practice_sport:writing_score + practice_sport:reading_score + transport_means:writing_score + wkly_study_hours:writing_score + wkly_study_hours:math_score, data=df_4_mdl_read2)
 
 summary(reading_without_interactions)
