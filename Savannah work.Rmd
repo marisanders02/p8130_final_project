@@ -5,14 +5,20 @@ date: "`r Sys.Date()`"
 output: html_document
 ---
 
-
 ```{r}
 library(tidyverse)
 library(gtsummary)
 library(emulator)
 ```
+# Preprocessing and EDA
+
+## Initial Preprocessing of Data
+- Filled in some missing is_first_child values
+- Converted all variables to factors
+- Dropped NAs
 
 ```{r}
+set.seed(4)
 test_df=read_csv('Project_1_data.csv') %>% janitor::clean_names() 
 
 test_df=test_df %>%  
@@ -32,7 +38,9 @@ test_df=test_df %>%
                wkly_study_hours=as.factor(wkly_study_hours)) %>% drop_na()
  
 ```
-
+## EDA
+- Look at the general summary stats of all variables
+- Look at the distributions of all outcomes (test scores)
 ```{r}
 summary(test_df)
 
@@ -43,12 +51,12 @@ test_df %>%
 test_df %>% 
   ggplot(aes(x=writing_score))+geom_histogram()
 ```
-
-```{r}
-stu_data=table(test_df$gender,test_df$ethnic_group)
-
-chisq.test(stu_data)
-```
+## Testing for Variable Associations
+- Look for collinearity
+- Chi-squared test results show a significant relationship between:
+     - gender and nr_siblings
+     - is_first_child and nr_siblings
+- Because of these relationships, we decided to drop nr_siblings to reduce collinearity
 
 ```{r}
 
@@ -86,164 +94,139 @@ ggplot(test_df, aes(x = nr_siblings, fill = is_first_child)) +
       labs(y = "Proportion", title = "Pairwise Relationship")
 
 ```
+## Explore Models for Predicting Scores Based on the Main Covariates
 
-## Writing Score
+### Writing Score Model
+
+Make df and fit model
 ```{r}
-
+set.seed(4)
 df_4_mdl_write=test_df %>% dplyr::select(gender,ethnic_group,parent_educ,lunch_type,test_prep,parent_marital_status,practice_sport,is_first_child,transport_means,wkly_study_hours,writing_score)
-full_fit_write=lm(writing_score ~ .^2,data=df_4_mdl_write)
+full_fit_write=lm(writing_score ~ .^2,data=df_4_mdl_write) # includes interaction effects
 ```
 
+Use stepwise regression to simplify the model
 ```{r}
-summary(full_fit_write)
-```
-
-```{r}
-stepwise_model_write <- step(full_fit_write, direction = "both", trace = 1)
+set.seed(4)
+stepwise_model_write <- step(full_fit_write, direction = "both", trace=0)
 
 summary(stepwise_model_write)
 ```
 
 
-## MAth Score
+### Math Score Model
 
+Make df and fit model
 ```{r}
-
+set.seed(4)
 df_4_mdl_math=test_df %>% dplyr::select(gender,ethnic_group,parent_educ,lunch_type,test_prep,parent_marital_status,practice_sport,is_first_child,transport_means,wkly_study_hours,math_score)
 full_fit_math=lm(math_score ~ .^2,data=df_4_mdl_math)
 ```
 
-```{r}
-summary(full_fit_math)
-```
 
+Use stepwise regression to simplify the model
 ```{r}
-stepwise_model_math <- step(full_fit_math, direction = "both", trace = 1)
+set.seed(4)
+stepwise_model_math <- step(full_fit_math, direction = "both", trace = 0)
 
 summary(stepwise_model_math)
 ```
 
 
-## REading Score 
-```{r}
+### Reading Score 
 
+Make df and fit model
+```{r}
+set.seed(4)
 df_4_mdl_read=test_df %>% dplyr::select(gender,ethnic_group,parent_educ,lunch_type,test_prep,parent_marital_status,practice_sport,is_first_child,transport_means,wkly_study_hours,reading_score)
 full_fit_read=lm(reading_score ~ .^2,data=df_4_mdl_read)
 ```
 
+Use stepwise regression to simplify the model
 ```{r}
-summary(full_fit_read)
-```
-
-```{r}
-stepwise_model_read <- step(full_fit_read, direction = "both", trace = 1)
+set.seed(4)
+stepwise_model_read <- step(full_fit_read, direction = "both", trace = 0)
 
 summary(stepwise_model_read)
 ```
 
-## Diagnostics 
+## Explore Diagnostics for These Models
 
-### Writing
+### Writing Score Model Diagnostics
+
 ```{r}
-
 plot(stepwise_model_write)
-
-
-step_as_lm_write=lm(formula = writing_score ~ gender + ethnic_group + parent_educ + 
-    lunch_type + test_prep + parent_marital_status + practice_sport + 
-    is_first_child + transport_means + wkly_study_hours + ethnic_group:transport_means + 
-    lunch_type:practice_sport + lunch_type:wkly_study_hours + 
-    parent_marital_status:is_first_child + parent_marital_status:wkly_study_hours, data = df_4_mdl_write)
-
-library('MASS')
-boxcox(step_as_lm_write)
-
-step_as_lm_write=lm(formula = (writing_score)^2 ~ gender + ethnic_group + parent_educ + 
-    lunch_type + test_prep + parent_marital_status + practice_sport + 
-    is_first_child + transport_means + wkly_study_hours + ethnic_group:transport_means + 
-    lunch_type:practice_sport + lunch_type:wkly_study_hours + 
-    parent_marital_status:is_first_child + parent_marital_status:wkly_study_hours, data = df_4_mdl_write)
-
-plot(step_as_lm_write)
-
-
 ```
+### Math Score Model Diagnostics
 
 ```{r}
-
 plot(stepwise_model_math)
-
-step_as_lm_math=lm(formula = math_score ~ gender + ethnic_group + parent_educ + 
-    lunch_type + test_prep + parent_marital_status + practice_sport + 
-    is_first_child + transport_means + wkly_study_hours + ethnic_group:transport_means + 
-    parent_educ:parent_marital_status + parent_educ:is_first_child + 
-    lunch_type:practice_sport + lunch_type:transport_means + 
-    test_prep:is_first_child + test_prep:wkly_study_hours + parent_marital_status:is_first_child + 
-    parent_marital_status:transport_means + parent_marital_status:wkly_study_hours + 
-    is_first_child:transport_means + is_first_child:wkly_study_hours,data = df_4_mdl_math)
 ```
+### Reading Score Model Diagnostics
 
 ```{r}
-
 plot(stepwise_model_read)
-
 ```
 
 
-##ADD in other scores
+## Explore Models for Predicting Scores Based on the Main Covariates and Other Scores
 
-
-## Writing Score2
+### Writing Score Model with Other Scores
 ```{r}
-
+set.seed(4)
 df_4_mdl_write2=test_df %>% dplyr::select(gender,ethnic_group,parent_educ,lunch_type,test_prep,parent_marital_status,practice_sport,is_first_child,transport_means,wkly_study_hours,writing_score,math_score,reading_score)
 full_fit_write2=lm(writing_score ~ .^2,data=df_4_mdl_write2)
 ```
 
-```{r}
-summary(full_fit_write2)
-```
 
 ```{r}
-stepwise_model_write2 <- step(full_fit_write2, direction = "both", trace = 1)
-
+set.seed(4)
+stepwise_model_write2 <- step(full_fit_write2, direction = "both", trace = 0)
 summary(stepwise_model_write2)
 ```
+Diagnostics
+```{r}
+plot(stepwise_model_write2)
+```
 
-
-## MAth Score
+### Math Score Model with Other Scores
 
 ```{r}
-
+set.seed(4)
 df_4_mdl_math2=test_df %>% dplyr::select(gender,ethnic_group,parent_educ,lunch_type,test_prep,parent_marital_status,practice_sport,is_first_child,transport_means,wkly_study_hours,math_score,writing_score,reading_score)
 full_fit_math2=lm(math_score ~ .^2,data=df_4_mdl_math2)
 ```
 
 ```{r}
-summary(full_fit_math2)
-```
-
-```{r}
-stepwise_model_math2 <- step(full_fit_math2, direction = "both", trace = 1)
-
+set.seed(4)
+stepwise_model_math2 <- step(full_fit_math2, direction = "both", trace = 0)
 summary(stepwise_model_math2)
 ```
-
-
-## REading Score 
+Diagnostics
 ```{r}
+plot(stepwise_model_math2)
+```
 
+
+### Reading Score Score Model with Other Scores
+
+```{r}
+set.seed(4)
 df_4_mdl_read2=test_df %>% dplyr::select(gender,ethnic_group,parent_educ,lunch_type,test_prep,parent_marital_status,practice_sport,is_first_child,transport_means,wkly_study_hours,reading_score,writing_score,math_score)
 full_fit_read2=lm(reading_score ~ .^2,data=df_4_mdl_read2)
 ```
 
 ```{r}
-summary(full_fit_read2)
-```
-
-```{r}
-stepwise_model_read2 <- step(full_fit_read2, direction = "both", trace = 1)
+set.seed(4)
+stepwise_model_read2 <- step(full_fit_read2, direction = "both", trace = 0)
 
 summary(stepwise_model_read2)
 ```
 
+Diagnostics
+```{r}
+plot(stepwise_model_read2)
+```
+
+
+## Savannah Messing Around 
