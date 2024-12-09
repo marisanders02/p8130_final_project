@@ -229,4 +229,27 @@ plot(stepwise_model_read2)
 ```
 
 
-## Savannah Messing Around 
+## Savannah Messing Around with Removing Interaction Terms
+
+I removed the interaction terms that weren't present in both models (covariates only and with other score) as well as weren't another variable interacting with the other scores
+```{r}
+set.seed(4)
+
+reading_without_interactions <- lm(reading_score ~ gender + ethnic_group + parent_educ +     lunch_type + test_prep + parent_marital_status + practice_sport +    is_first_child + transport_means + wkly_study_hours + reading_score + math_score + gender:writing_score + gender:math_score + ethnic_group:transport_means +     ethnic_group:writing_score + parent_educ:math_score +   lunch_type:wkly_study_hours + 
+parent_marital_status:is_first_child +     parent_marital_status:wkly_study_hours + parent_marital_status:writing_score + practice_sport:writing_score + practice_sport:reading_score + transport_means:writing_score + wkly_study_hours:writing_score + wkly_study_hours:math_score, data=df_4_mdl_read2)
+
+summary(reading_without_interactions)
+```
+
+Now, take the model above and remove insignficant interaction terms (if some of the categories of a variable are insignificant, remove the whole interaction term)
+```{r}
+set.seed(4)
+
+reading_without_interactions_or_insig <- lm(reading_score ~ gender + ethnic_group + parent_educ +     lunch_type + test_prep + parent_marital_status + practice_sport +    is_first_child + transport_means + wkly_study_hours + reading_score + math_score + gender:writing_score +  practice_sport:writing_score + practice_sport:reading_score, data=df_4_mdl_read2)
+
+summary(reading_without_interactions_or_insig)
+```
+Take that last model, and just look at diagnostic plots
+```{r}
+plot(reading_without_interactions)
+```
