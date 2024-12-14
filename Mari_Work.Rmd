@@ -1,7 +1,17 @@
 ---
-title: "Mari's Work"
-output: html_document
+title: "9. Appendix"
+output: 
+  pdf_document:
+    latex_engine: xelatex
+mainfont: Times New Roman
 ---
+```{r, echo = FALSE}
+knitr::opts_chunk$set(
+  fig.width = 6,
+  fig.asp = .6,
+  out.width = "90%"
+)
+```
 
 ```{r, include = FALSE}
 library(tidyverse)
@@ -80,18 +90,16 @@ ggplot(test_df, aes(x = nr_siblings, fill = is_first_child)) +
 
 ```
 
-## Explore Models for Predicting Scores Based on the Main Covariates
+## Table 1: Type A Model Coefficients
 
 ### Writing Score Model
 
-Make df and fit model
 ```{r, include = FALSE}
 set.seed(4)
 df_4_mdl_write=test_df %>% dplyr::select(gender,ethnic_group,parent_educ,lunch_type,test_prep,parent_marital_status,practice_sport,is_first_child,transport_means,wkly_study_hours,writing_score)
 full_fit_write=lm(writing_score ~ .^2,data=df_4_mdl_write) # includes interaction effects
 ```
 
-Use stepwise regression to simplify the model
 ```{r, include = FALSE}
 set.seed(4)
 stepwise_model_write <- step(full_fit_write, direction = "both", trace = 0)
@@ -99,78 +107,56 @@ stepwise_model_write <- step(full_fit_write, direction = "both", trace = 0)
 ```
 
 ```{r, echo = FALSE}
-stepwise_model_write$coefficients %>% knitr::kable()
+stepwise_model_write$coefficients %>% knitr::kable(col.names = c("Covariate", "Coefficient"))
 ```
 
-
+The proper interpretation of these coefficients is as follows: Holding all other variables constant, one unit increase in [covariate] leads to [coefficient] units increase in the outcome of interest.
+ 
 ### Math Score Model
 
-Make df and fit model
 ```{r, include = FALSE}
 set.seed(4)
 df_4_mdl_math=test_df %>% dplyr::select(gender,ethnic_group,parent_educ,lunch_type,test_prep,parent_marital_status,practice_sport,is_first_child,transport_means,wkly_study_hours,math_score)
 full_fit_math=lm(math_score ~ .^2,data=df_4_mdl_math)
 ```
 
-
-Use stepwise regression to simplify the model
 ```{r, include = FALSE}
 set.seed(4)
 stepwise_model_math <- step(full_fit_math, direction = "both", trace = 0)
 ```
 
 ```{r, echo = FALSE}
-stepwise_model_math$coefficients %>% knitr::kable()
+stepwise_model_math$coefficients %>% knitr::kable(col.names = c("Covariate", "Coefficient"))
 ```
 
+The proper interpretation of these coefficients is as follows: Holding all other variables constant, one unit increase in [covariate] leads to [coefficient] units increase in the outcome of interest.
 
-### Reading Score 
+### Reading Score Model
 
-Make df and fit model
 ```{r, include = FALSE}
 set.seed(4)
 df_4_mdl_read=test_df %>% dplyr::select(gender,ethnic_group,parent_educ,lunch_type,test_prep,parent_marital_status,practice_sport,is_first_child,transport_means,wkly_study_hours,reading_score)
 full_fit_read=lm(reading_score ~ .^2,data=df_4_mdl_read)
 ```
 
-Use stepwise regression to simplify the model
 ```{r, include = FALSE}
 set.seed(4)
 stepwise_model_read <- step(full_fit_read, direction = "both", trace = 0)
 ```
 
 ```{r, echo = FALSE}
-stepwise_model_read$coefficients %>% knitr::kable()
+stepwise_model_read$coefficients %>% knitr::kable(col.names = c("Covariate", "Coefficient"))
 ```
 
-### R Squared Table
+The proper interpretation of these coefficients is as follows: Holding all other variables constant, one unit increase in [covariate] leads to [coefficient] units increase in the outcome of interest.
+
+
+### Table 2: Multiple and Adjusted $R^2$ for all models 
 
 ![](Rsquared_tables.png)
 
-## Explore Diagnostics for These Models
+Multiple $R^2$ is bold, adjusted $R^2$ is italicized. 
 
-### Writing Score Model Diagnostics
-
-```{r, echo = FALSE}
-par(mfrow = c(2, 2))
-plot(stepwise_model_write) 
-```
-### Math Score Model Diagnostics
-
-```{r, echo = FALSE}
-par(mfrow=c(2, 2))
-plot(stepwise_model_math)
-```
-### Reading Score Model Diagnostics
-
-```{r, echo = FALSE}
-par(mfrow=c(2, 2))
-plot(stepwise_model_read)
-```
-
-## Explore Models for Predicting Scores Based on the Main Covariates and Other Scores
-
-### Writing Score Model with Other Scores
 ```{r, include = FALSE}
 set.seed(4)
 df_4_mdl_write2=test_df %>% dplyr::select(gender,ethnic_group,parent_educ,lunch_type,test_prep,parent_marital_status,practice_sport,is_first_child,transport_means,wkly_study_hours,writing_score,math_score,reading_score)
@@ -183,7 +169,7 @@ set.seed(4)
 stepwise_model_write2 <- step(full_fit_write2, direction = "both", trace = 0)
 summary(stepwise_model_write2)
 ```
-Diagnostics
+
 ```{r, include = FALSE}
 plot(stepwise_model_write2)
 ```
@@ -201,8 +187,6 @@ stepwise_model_math2 <- step(full_fit_math2, direction = "both", trace = 0)
 summary(stepwise_model_math2)
 ```
 
-### Reading Score Score Model with Other Scores
-
 ```{r, include = FALSE}
 set.seed(4)
 df_4_mdl_read2=test_df %>% dplyr::select(gender,ethnic_group,parent_educ,lunch_type,test_prep,parent_marital_status,practice_sport,is_first_child,transport_means,wkly_study_hours,reading_score,writing_score,math_score)
@@ -216,48 +200,99 @@ stepwise_model_read2 <- step(full_fit_read2, direction = "both", trace = 0)
 summary(stepwise_model_read2)
 ```
 
-
-Diagnostics
 ```{r, include = FALSE}
 plot(stepwise_model_math2)
 ```
 
-## Explore Models for Predicting Scores Based on the Main Covariates and Other Scores
-## Savannah Messing Around with Removing Interaction Terms
+## Table 3: Type B Model Coefficients
 
-Trying out just removing the insignificant terms from the model that predicts with covariates and the other scores
+### Writing Score with Other Scores as Predictors 
 
-Writing
 ```{r, echo = FALSE}
 set.seed(4)
 par(mfrow=c(2, 2))
 writing_without_insig_interactions <- lm(writing_score ~ gender + ethnic_group + parent_educ +     lunch_type + test_prep + parent_marital_status + practice_sport +    is_first_child + transport_means + wkly_study_hours + reading_score + math_score + transport_means:reading_score + math_score:reading_score, data=df_4_mdl_read2)
 
-writing_without_insig_interactions$coefficients %>% knitr::kable()
-
-plot(writing_without_insig_interactions)
+writing_without_insig_interactions$coefficients %>% knitr::kable(col.names = c("Covariate", "Coefficient"))
 ```
 
-Math
+The proper interpretation of these coefficients is as follows: Holding all other variables constant, one unit increase in [covariate] leads to [coefficient] units increase in the outcome of interest.
+
+
+## Math Score with Other Scores as Predictors
+
 ```{r, echo = FALSE}
 set.seed(4)
 par(mfrow=c(2, 2))
 math_without_insig_interactions <- lm(math_score ~ gender + ethnic_group + parent_educ +     lunch_type + test_prep + parent_marital_status + practice_sport +    is_first_child + transport_means + wkly_study_hours + reading_score + writing_score + lunch_type:is_first_child + test_prep:transport_means + wkly_study_hours:reading_score, data=df_4_mdl_read2)
 
-math_without_insig_interactions$coefficients %>% knitr::kable()
-plot(math_without_insig_interactions)
-
+math_without_insig_interactions$coefficients %>% knitr::kable(col.names = c("Covariate", "Coefficient"))
 ```
 
+The proper interpretation of these coefficients is as follows: Holding all other variables constant, one unit increase in [covariate] leads to [coefficient] units increase in the outcome of interest.
 
-Reading
+## Reading Score with Other Scores as Predictors 
+
 ```{r, echo = FALSE}
 set.seed(4)
 par(mfrow=c(2, 2))
 reading_without_insig_interactions <- lm(reading_score ~ gender + ethnic_group + parent_educ +     lunch_type + test_prep + parent_marital_status + practice_sport +    is_first_child + transport_means + wkly_study_hours + writing_score + math_score + is_first_child:transport_means + transport_means:writing_score, data=df_4_mdl_read2)
 
-reading_without_insig_interactions$coefficients %>% knitr::kable()
-plot(reading_without_insig_interactions)
+reading_without_insig_interactions$coefficients %>% knitr::kable(col.names = c("Covariate", "Coefficient"))
 ```
 
+The proper interpretation of these coefficients is as follows: Holding all other variables constant, one unit increase in [covariate] leads to [coefficient] units increase in the outcome of interest.
+
+## Explore Diagnostics for These Models
+
+### Figure 1: Diagnostic plots for the Writing Type A Model
+
+```{r, echo = FALSE}
+par(mfrow = c(2, 2))
+plot(stepwise_model_write) 
+```
+
+
+### Figure 2: Diagnostic plots for the Math Type A Model
+
+```{r, echo = FALSE, warning = FALSE}
+par(mfrow=c(2, 2))
+plot(stepwise_model_math)
+```
+
+
+### Figure 3: Diagnostic plots for the Reading Type A Model
+
+
+```{r, echo = FALSE}
+par(mfrow=c(2, 2))
+plot(stepwise_model_read)
+```
+
+
+### Figure 4: Diagnostic plots for the Writing Type B Model
+
+
+```{r, echo = FALSE}
+par(mfrow=c(2, 2))
+plot(writing_without_insig_interactions)
+```
+
+
+### Figure 5: Diagnostic plots for the Math Type B Model
+
+
+```{r, echo = FALSE}
+par(mfrow=c(2, 2))
+plot(math_without_insig_interactions)
+```
+
+
+### Figure 6: Diagnostic plots for the Reading Type B Model
+
+
+```{r, echo = FALSE}
+par(mfrow=c(2, 2))
+plot(reading_without_insig_interactions)
+```
 
