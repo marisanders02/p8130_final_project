@@ -112,6 +112,15 @@ stepwise_model_write <- step(full_fit_write, direction = "both", trace=0)
 
 summary(stepwise_model_write)
 ```
+Removing insignificant interaction terms from the writing model:
+
+```{r}
+set.seed(4)
+full_fit_write_minus_insig=lm(writing_score ~ gender + ethnic_group + parent_educ +  lunch_type + test_prep + parent_marital_status + practice_sport + is_first_child + transport_means + wkly_study_hours,data=df_4_mdl_write) # has no significant interaction effects
+
+summary(full_fit_write_minus_insig)
+plot(full_fit_write_minus_insig)
+```
 
 
 ### Math Score Model
@@ -131,6 +140,16 @@ stepwise_model_math <- step(full_fit_math, direction = "both", trace = 0)
 
 summary(stepwise_model_math)
 ```
+Removing insignificant interaction terms from the math model:
+
+```{r}
+set.seed(4)
+full_fit_math_minus_insig=lm(math_score ~ gender + ethnic_group + parent_educ +  lunch_type + test_prep + parent_marital_status + practice_sport + is_first_child + transport_means + wkly_study_hours + lunch_type*practice_sport,data=df_4_mdl_math) # has no significant interaction effects
+
+summary(full_fit_math_minus_insig)
+plot(full_fit_math_minus_insig)
+```
+
 
 
 ### Reading Score 
@@ -150,7 +169,16 @@ stepwise_model_read <- step(full_fit_read, direction = "both", trace = 0)
 summary(stepwise_model_read)
 ```
 
-## Explore Diagnostics for These Models
+```{r}
+set.seed(4)
+full_fit_read_minus_insig=lm(reading_score ~ gender + ethnic_group + parent_educ +  lunch_type + test_prep + parent_marital_status + practice_sport + is_first_child + transport_means + wkly_study_hours,data=df_4_mdl_read) # has no significant interaction effects
+
+summary(full_fit_read_minus_insig)
+plot(full_fit_read_minus_insig)
+```
+
+
+## Explore Diagnostics for These Models (with Insignificent Interaction Terms)
 
 ### Writing Score Model Diagnostics
 
@@ -228,28 +256,8 @@ Diagnostics
 plot(stepwise_model_read2)
 ```
 
-10-Fold Cross-Validation
 
-Writing
-```{r}
-library(caret)
-train = trainControl(method = "cv", number = 10)
-
-writing_model_cv = train(writing_score ~ gender + ethnic_group + parent_educ +  lunch_type + test_prep + parent_marital_status + practice_sport +    is_first_child + transport_means + wkly_study_hours +  reading_score + math_score +math_score*reading_score,
-data = df_4_mdl_write2,
-trControl = train,
-method = 'lm',
-na.action = na.pass)
-
-print(writing_model_cv)
-```
-
-
-## Savannah Messing Around with Removing Interaction Terms
-
-################################# -- before the X-line might be a good idea to include
-
-Trying out just removing the insignificant terms from the model that predicts with covariates and the other scores
+## Removing the insignificant terms from the model that predicts with covariates and the other scores
 
 Writing
 ```{r}
